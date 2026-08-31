@@ -1,13 +1,20 @@
 {
   "manifest_version": 3,
   "name": "Instagram Unfollow Tracker Pro",
-  "version": "2.0.0",
-  "description": "Identifie les comptes qui ne vous suivent pas en retour, dashboard complet, historique, auto-pilot securise, whitelist et export.",
+  "version": "2.1.0",
+  "description": "Identifie les comptes qui ne vous suivent pas en retour, dashboard complet, historique, notifications de unfollow, auto-pilot securise, whitelist et export.",
   "permissions": ["storage", "cookies", "notifications", "alarms", "tabs"],
   "host_permissions": ["https://www.instagram.com/*"],
   "background": {
     "service_worker": "background.js"
   },
+  "content_scripts": [
+    {
+      "matches": ["https://www.instagram.com/*"],
+      "js": ["content_script.js"],
+      "run_at": "document_idle"
+    }
+  ],
   "action": {
     "default_popup": "popup.html"
   }

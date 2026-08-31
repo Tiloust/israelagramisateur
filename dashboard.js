@@ -24,6 +24,10 @@ const els = {
 
 let currentNonFollowers = [];
 
+chrome.storage.local.get("lastUsername", (r) => {
+  if (r.lastUsername) els.username.value = r.lastUsername;
+});
+
 async function refreshStats() {
   const nonFollowers = await getNonFollowers();
   currentNonFollowers = nonFollowers;
@@ -137,51 +141,37 @@ async function handleUnfollow(btn) {
   }
   btn.disabled = true;
   btn.textContent = "...";
-  try {
-    const ok = await unfollowUser(btn.dataset.id);
-    if (ok) {
-      await markUnfollowed(btn.dataset.username);
-      btn.textContent = "✅";
-      await refreshStats();
-    } else {
-      btn.textContent = "❌ Reessayer";
-      btn.disabled = false;
+  chrome.runtime.sendMessage(
+    { action: "UNFOLLOW_REQUEST", userId: btn.dataset.id, username: btn.dataset.username },
+    async (response) => {
+      if (response && response.success) {
+        btn.textContent = "✅";
+        await refreshStats();
+      } else {
+        btn.textContent = "❌ Reessayer";
+        btn.disabled = false;
+        if (response && response.error) alert(response.error);
+      }
     }
-  } catch (e) {
-    btn.textContent = "❌ Erreur";
-    btn.disabled = false;
-  }
+  );
 }
 
-els.scanBtn.addEventListener("click", async () => {
-  const username = els.username.value.trim();
-  if (!username) return alert("Entrez votre nom d'utilisateur Instagram.");
+els.scanBtn.addEventListener("click", () => {
+  const username = els.username.value.trim().replace(/^@/, "");
+  if (!username) return alert("Entrez votre nom d'utilisateur Instagram (sans le @).");
 
   els.scanBtn.disabled = true;
-  els.scanStatus.textContent = "Connexion a Instagram...";
+  els.scanStatus.textContent = "Scan en cours (peut prendre 1 a 2 minutes)...";
 
-  try {
-    const userId = await getUserId(username);
-    const following = await fetchList(userId, "following", (n) => {
-      els.scanStatus.textContent = `Abonnements charges : ${n}...`;
-    });
-    const followers = await fetchList(userId, "followers", (n) => {
-      els.scanStatus.textContent = `Abonnes charges : ${n}...`;
-    });
-
-    await saveProfiles(following, followers);
-    const nonFollowersCount = following.filter(
-      (f) => !followers.some((x) => x.username === f.username)
-    ).length;
-    await addScanRecord(following.length, followers.length, nonFollowersCount);
-
-    els.scanStatus.textContent = `Scan termine : ${nonFollowersCount} non-followers trouves.`;
-    await refreshStats();
-  } catch (e) {
-    els.scanStatus.textContent = "Erreur : " + e.message;
-  } finally {
+  chrome.runtime.sendMessage({ action: "SCAN_REQUEST", username }, async (response) => {
     els.scanBtn.disabled = false;
-  }
+    if (!response || !response.success) {
+      els.scanStatus.textContent = "Erreur : " + (response?.error || "inconnue");
+      return;
+    }
+    els.scanStatus.textContent = `Scan termine : ${response.nonFollowersCount} non-followers.`;
+    await refreshStats();
+  });
 });
 
 els.searchInput.addEventListener("input", renderList);
@@ -220,7 +210,7 @@ els.startAutopilot.addEventListener("click", () => {
     : currentNonFollowers.filter((p) => !p.whitelisted).map((p) => p.username);
 
   if (!usernames.length) return alert("Aucun profil a desabonner.");
-  if (!confirm(`Demarrer l'auto-pilot sur ${usernames.length} profil(s) ? Rythme securise : max ${MAX_PER_HOUR}/h.`)) return;
+  if (!confirm(`Demarrer l'auto-pilot sur ${usernames.length} profil(s) ? Rythme securise : max ${MAX_PER_HOUR}/h. Garde un onglet instagram.com ouvert.`)) return;
 
   chrome.runtime.sendMessage({ action: "START_AUTOPILOT", usernames }, () => {
     refreshAutopilotStatus();

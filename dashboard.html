@@ -7,57 +7,60 @@
 </head>
 <body>
   <header>
-    <h1>🔍 Instagram Unfollow Tracker <span class="pro">PRO</span></h1>
-    <div class="scan-bar">
-      <input type="text" id="username" placeholder="Votre @username Instagram" />
-      <button id="scanBtn">Scanner</button>
-      <span id="scanStatus"></span>
+    <div class="header-inner">
+      <h1>🔍 Instagram Unfollow Tracker <span class="pro">PRO</span></h1>
+      <div class="scan-bar">
+        <input type="text" id="username" placeholder="Votre username Instagram (sans @)" />
+        <button id="scanBtn">Scanner</button>
+        <span id="scanStatus"></span>
+      </div>
     </div>
   </header>
 
-  <section class="stats-grid">
-    <div class="stat-card"><span class="stat-value" id="statFollowing">–</span><span class="stat-label">Abonnements</span></div>
-    <div class="stat-card"><span class="stat-value" id="statFollowers">–</span><span class="stat-label">Abonnes</span></div>
-    <div class="stat-card"><span class="stat-value" id="statNonFollowers">–</span><span class="stat-label">Non-followers</span></div>
-    <div class="stat-card"><span class="stat-value" id="statRateLimit">–</span><span class="stat-label">Desabonnements/h</span></div>
-  </section>
+  <main class="container">
+    <section class="stats-grid">
+      <div class="stat-card"><span class="stat-value" id="statFollowing">–</span><span class="stat-label">Abonnements</span></div>
+      <div class="stat-card"><span class="stat-value" id="statFollowers">–</span><span class="stat-label">Abonnes</span></div>
+      <div class="stat-card"><span class="stat-value" id="statNonFollowers">–</span><span class="stat-label">Non-followers</span></div>
+      <div class="stat-card"><span class="stat-value" id="statRateLimit">–</span><span class="stat-label">Desabonnements/h</span></div>
+    </section>
 
-  <section class="chart-section">
-    <h2>Evolution des scans</h2>
-    <canvas id="historyChart" width="900" height="220"></canvas>
-  </section>
+    <section class="panel chart-section">
+      <h2>Evolution des scans</h2>
+      <canvas id="historyChart" width="900" height="220"></canvas>
+    </section>
 
-  <section class="controls">
-    <input type="text" id="searchInput" placeholder="Rechercher un @username..." />
-    <select id="sortSelect">
-      <option value="username">Trier par nom</option>
-      <option value="first_seen">Trier par anciennete</option>
-    </select>
-    <label><input type="checkbox" id="hideWhitelisted" /> Masquer la whitelist</label>
-    <button id="exportCSV">Export CSV</button>
-    <button id="exportJSON">Export JSON</button>
-  </section>
+    <section class="panel controls">
+      <input type="text" id="searchInput" placeholder="Rechercher un @username..." />
+      <select id="sortSelect">
+        <option value="username">Trier par nom</option>
+        <option value="first_seen">Trier par anciennete</option>
+      </select>
+      <label class="check-label"><input type="checkbox" id="hideWhitelisted" /> Masquer la whitelist</label>
+      <button id="exportCSV" class="btn-secondary">Export CSV</button>
+      <button id="exportJSON" class="btn-secondary">Export JSON</button>
+    </section>
 
-  <section class="autopilot">
-    <h2>🚀 Auto-pilot securise</h2>
-    <p class="hint">Desabonne automatiquement en tache de fond, en respectant la limite horaire, avec notifications a chaque action.</p>
-    <div class="autopilot-controls">
-      <button id="startAutopilot">Demarrer sur la selection</button>
-      <button id="stopAutopilot" class="danger">Arreter</button>
-      <span id="autopilotStatus">Inactif</span>
-    </div>
-  </section>
+    <section class="panel autopilot">
+      <h2>🚀 Auto-pilot securise</h2>
+      <p class="hint">Desabonne automatiquement en tache de fond (necessite un onglet instagram.com ouvert), avec notifications a chaque action.</p>
+      <div class="autopilot-controls">
+        <button id="startAutopilot" class="btn-primary">Demarrer sur la selection</button>
+        <button id="stopAutopilot" class="btn-danger">Arreter</button>
+        <span id="autopilotStatus">Inactif</span>
+      </div>
+    </section>
 
-  <section class="list-section">
-    <div class="list-header">
-      <label><input type="checkbox" id="selectAll" /> Tout selectionner</label>
-      <span id="listCount"></span>
-    </div>
-    <div id="profileList" class="profile-grid"></div>
-  </section>
+    <section class="panel list-section">
+      <div class="list-header">
+        <label class="check-label"><input type="checkbox" id="selectAll" /> Tout selectionner</label>
+        <span id="listCount"></span>
+      </div>
+      <div id="profileList" class="profile-grid"></div>
+    </section>
+  </main>
 
   <script src="db.js"></script>
-  <script src="ig-api.js"></script>
   <script src="dashboard.js"></script>
 </body>
 </html>

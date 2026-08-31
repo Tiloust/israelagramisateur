@@ -38,25 +38,44 @@ async function tx(storeName, mode, fn) {
   });
 }
 
-async function saveProfiles(following, followers) {
+async function getAllProfiles() {
+  const db = await openDB();
+  return new Promise((resolve) => {
+    const req = db.transaction("profiles", "readonly").objectStore("profiles").getAll();
+    req.onsuccess = () => resolve(req.result);
+  });
+}
+
+async function saveProfilesAndDetectLost(following, followers) {
+  const oldProfiles = await getAllProfiles();
+  const oldFollowerMap = new Map(oldProfiles.map((p) => [p.username, p.is_follower]));
+
   const followerSet = new Set(followers.map((f) => f.username));
+  const followingSet = new Set(following.map((f) => f.username));
   const now = Date.now();
+
+  const union = new Map();
+  following.forEach((p) => union.set(p.username, p));
+  followers.forEach((p) => {
+    if (!union.has(p.username)) union.set(p.username, p);
+  });
+
   const db = await openDB();
   const transaction = db.transaction("profiles", "readwrite");
   const store = transaction.objectStore("profiles");
 
-  for (const profile of following) {
-    const existingReq = store.get(profile.username);
+  for (const [username, profile] of union) {
+    const existingReq = store.get(username);
     await new Promise((resolve) => {
       existingReq.onsuccess = () => {
         const existing = existingReq.result;
         store.put({
-          username: profile.username,
-          full_name: profile.full_name,
-          profile_pic_url: profile.profile_pic_url,
-          user_id: profile.user_id,
-          is_following: 1,
-          is_follower: followerSet.has(profile.username) ? 1 : 0,
+          username,
+          full_name: profile.full_name || (existing ? existing.full_name : ""),
+          profile_pic_url: profile.profile_pic_url || (existing ? existing.profile_pic_url : ""),
+          user_id: profile.user_id || (existing ? existing.user_id : null),
+          is_following: followingSet.has(username) ? 1 : 0,
+          is_follower: followerSet.has(username) ? 1 : 0,
           whitelisted: existing ? existing.whitelisted : 0,
           unfollowed: existing ? existing.unfollowed : 0,
           unfollowed_at: existing ? existing.unfollowed_at : null,
@@ -68,9 +87,15 @@ async function saveProfiles(following, followers) {
     });
   }
 
-  return new Promise((resolve) => {
-    transaction.oncomplete = () => resolve();
-  });
+  await new Promise((resolve) => (transaction.oncomplete = () => resolve()));
+
+  const lostFollowers = [];
+  for (const [username, wasFollower] of oldFollowerMap) {
+    if (wasFollower === 1 && !followerSet.has(username)) {
+      lostFollowers.push(username);
+    }
+  }
+  return lostFollowers;
 }
 
 async function addScanRecord(totalFollowing, totalFollowers, nonFollowersCount) {
@@ -90,14 +115,6 @@ async function getScanHistory() {
     const store = db.transaction("scans", "readonly").objectStore("scans");
     const req = store.getAll();
     req.onsuccess = () => resolve(req.result.sort((a, b) => a.timestamp - b.timestamp));
-  });
-}
-
-async function getAllProfiles() {
-  const db = await openDB();
-  return new Promise((resolve) => {
-    const req = db.transaction("profiles", "readonly").objectStore("profiles").getAll();
-    req.onsuccess = () => resolve(req.result);
   });
 }
 
