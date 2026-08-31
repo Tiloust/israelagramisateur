@@ -2,111 +2,119 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8" />
-<title>Instagram Unfollow Tracker Pro</title>
+<title>Instagram Unfollow Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="dashboard.css" />
 </head>
 <body>
   <div class="layout">
     <aside class="sidebar">
-      <div class="sidebar-logo"><span class="logo-serif">IU</span><span class="logo-sub">PRO</span></div>
-      <nav class="sidebar-nav">
-        <button class="nav-item active" data-tab="home" title="Accueil">
-          <svg viewBox="0 0 24 24"><path d="M4 11.5L12 4l8 7.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" fill="currentColor"/></svg>
+      <div class="mark">IU<span class="mark-sub">PRO</span></div>
+      <nav class="nav">
+        <button class="nav-item active" data-tab="home">
+          <svg viewBox="0 0 24 24"><path d="M4 11.5L12 4l8 7.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
         </button>
-        <button class="nav-item" data-tab="list" title="Profils">
-          <svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3" fill="currentColor"/><circle cx="16" cy="8" r="3" fill="currentColor"/><path d="M2 20c0-3 3-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="2" fill="none"/><path d="M10 20c0-3 3-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        <button class="nav-item" data-tab="list">
+          <svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="2.6" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="16" cy="8" r="2.6" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M2 20c0-3 3-5 6-5s6 2 6 5M10 20c0-3 3-5 6-5s6 2 6 5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
         </button>
-        <button class="nav-item" data-tab="stats" title="Statistiques">
-          <svg viewBox="0 0 24 24"><rect x="4" y="12" width="4" height="8" fill="currentColor"/><rect x="10" y="7" width="4" height="13" fill="currentColor"/><rect x="16" y="3" width="4" height="17" fill="currentColor"/></svg>
-        </button>
-        <button class="nav-item" data-tab="settings" title="Parametres">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
+        <button class="nav-item" data-tab="settings">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.6" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z" fill="none" stroke="currentColor" stroke-width="1"/></svg>
         </button>
       </nav>
     </aside>
 
     <main class="main">
       <header class="topbar">
-        <h1><span class="serif">Instagram Unfollow Tracker</span> <span class="pro-badge">PRO</span></h1>
-        <div class="account-chip">
-          <div class="account-avatar" id="accountAvatar">?</div>
-          <div class="account-text">
-            <span class="account-name" id="accountName">Aucun compte</span>
-            <span class="account-sub">Compte PRO</span>
-          </div>
-          <span class="chip-caret">v</span>
+        <div class="brand">
+          <span class="brand-mark">IU</span>
+          <span class="brand-name">Instagram Unfollow Tracker</span>
+          <span class="brand-pro">PRO</span>
+        </div>
+        <div class="account">
+          <span class="account-avatar" id="accountAvatar">T</span>
+          <span class="account-name" id="accountName">tiloust__</span>
+          <span class="account-sub">Compte PRO</span>
+          <span class="chev">&#9662;</span>
         </div>
       </header>
 
-      <section class="scan-card">
-        <label class="field-label">Nom d'utilisateur Instagram</label>
+      <section class="scan-section">
+        <p class="eyebrow">Instagram / Analyse</p>
+        <h1 class="section-title">Identifiez les comptes qui ne vous suivent plus.</h1>
         <div class="scan-row">
-          <input type="text" id="username" placeholder="tiloust__" />
-          <button id="scanBtn">Lancer le scan <span class="btn-arrow">-&gt;</span></button>
+          <input type="text" id="username" placeholder="@tiloust__" />
+          <button id="scanBtn">Lancer l'analyse</button>
         </div>
         <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
         <p class="joke-text" id="jokeText"></p>
       </section>
 
-      <section class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="currentColor"/></svg></div>
-          <div class="stat-text"><span class="stat-label">Abonnements</span><span class="stat-value" id="statFollowing">-</span></div>
+      <section class="metrics-row">
+        <div class="metric">
+          <span class="metric-label">Abonnements</span>
+          <span class="metric-value" id="statFollowing">&mdash;</span>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="currentColor"/></svg></div>
-          <div class="stat-text"><span class="stat-label">Abonnes</span><span class="stat-value" id="statFollowers">-</span></div>
+        <div class="metric">
+          <span class="metric-label">Abonn&eacute;s</span>
+          <span class="metric-value" id="statFollowers">&mdash;</span>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="8" cy="9" r="3" fill="currentColor"/><circle cx="16" cy="9" r="3" fill="currentColor"/><path d="M2 20c0-3.5 3-5.5 6-5.5s6 2 6 5.5" fill="currentColor"/><path d="M10 20c0-3.5 3-5.5 6-5.5s6 2 6 5.5" fill="currentColor"/></svg></div>
-          <div class="stat-text"><span class="stat-label">Non-followers</span><span class="stat-value" id="statNonFollowers">0</span></div>
+        <div class="metric">
+          <span class="metric-label">Non-followers</span>
+          <span class="metric-value" id="statNonFollowers">0</span>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 7v5l3 3" stroke="currentColor" stroke-width="2" fill="none"/></svg></div>
-          <div class="stat-text"><span class="stat-label">Desabonnements / h</span><span class="stat-value" id="statRateLimit">0 / 15</span></div>
-        </div>
-      </section>
-
-      <section class="controls-card">
-        <div class="search-wrap">
-          <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2"/></svg>
-          <input type="text" id="searchInput" placeholder="Rechercher un @username" />
-        </div>
-        <select id="sortSelect">
-          <option value="username_asc">Nom (A -&gt; Z)</option>
-          <option value="username_desc">Nom (Z -&gt; A)</option>
-          <option value="first_seen_asc">Suivi depuis le plus longtemps</option>
-          <option value="first_seen_desc">Suivi le plus recemment</option>
-        </select>
-        <label class="check-label"><input type="checkbox" id="hideWhitelisted" /> Masquer la whitelist</label>
-        <button id="exportCSV" class="btn-outline">Export CSV</button>
-        <button id="exportJSON" class="btn-dark">Export JSON</button>
-      </section>
-
-      <section class="autopilot-card">
-        <div class="autopilot-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
-        </div>
-        <div class="autopilot-text">
-          <span class="autopilot-title">Auto-pilot securise</span>
-          <span class="autopilot-hint">Desabonne automatiquement en tache de fond (necessite un onglet instagram.com ouvert), avec notifications a chaque action.</span>
-        </div>
-        <div class="autopilot-actions">
-          <button id="startAutopilot" class="btn-dark">Demarrer sur la selection</button>
-          <button id="stopAutopilot" class="btn-outline">Arreter</button>
-          <span id="autopilotStatus" class="autopilot-status">Inactif - 0/15 cette heure</span>
+        <div class="metric">
+          <span class="metric-label">D&eacute;sabonnements / h</span>
+          <span class="metric-value" id="statRateLimit">0 / 15</span>
         </div>
       </section>
 
-      <section class="list-card">
-        <div class="list-header">
-          <label class="check-label"><input type="checkbox" id="selectAll" /> Tout selectionner</label>
-          <span id="listCount">0 profil(s) selectionne(s)</span>
+      <section class="list-section">
+        <div class="list-section-header">
+          <h2 class="section-heading">Profils identifi&eacute;s</h2>
+          <div class="export-actions">
+            <button id="exportCSV" class="link-btn">Exporter CSV</button>
+            <span class="sep">/</span>
+            <button id="exportJSON" class="link-btn">Exporter JSON</button>
+          </div>
         </div>
-        <div id="profileList" class="profile-grid"></div>
+
+        <div class="controls-row">
+          <input type="text" id="searchInput" class="control-input" placeholder="Rechercher un @username" />
+          <select id="sortSelect" class="control-select">
+            <option value="username_asc">Nom (A &rarr; Z)</option>
+            <option value="username_desc">Nom (Z &rarr; A)</option>
+            <option value="first_seen_asc">Suivi depuis le plus longtemps</option>
+            <option value="first_seen_desc">Suivi le plus r&eacute;cemment</option>
+          </select>
+          <label class="check-label"><input type="checkbox" id="hideWhitelisted" /> Masquer la whitelist</label>
+          <label class="check-label select-all"><input type="checkbox" id="selectAll" /> Tout s&eacute;lectionner</label>
+          <span class="list-count" id="listCount">0 profil(s)</span>
+        </div>
+
+        <hr class="rule" />
+        <div id="profileList" class="profile-list"></div>
+        <p class="empty-state" id="emptyState">Aucun profil identifi&eacute;.<br>Lancez une analyse pour afficher les comptes qui ne vous suivent pas.</p>
+      </section>
+
+      <section class="automation-section">
+        <div class="automation-header">
+          <h2 class="section-heading">Automatisation</h2>
+          <label class="switch">
+            <input type="checkbox" id="autopilotToggle" disabled />
+            <span class="switch-track"></span>
+          </label>
+        </div>
+        <p class="automation-desc">D&eacute;sabonnement automatique en t&acirc;che de fond. N&eacute;cessite un onglet instagram.com ouvert.</p>
+        <div class="automation-meta">
+          <span>15 actions maximum / heure</span>
+          <span id="autopilotStatus">0 action effectu&eacute;e</span>
+        </div>
+        <div class="automation-actions">
+          <button id="startAutopilot" class="btn-primary">D&eacute;marrer</button>
+          <button id="stopAutopilot" class="btn-secondary">Arr&ecirc;ter</button>
+        </div>
       </section>
     </main>
   </div>
