@@ -3,9 +3,10 @@ const MAX_PER_HOUR = 15;
 const els = {
   username: document.getElementById("username"),
   scanBtn: document.getElementById("scanBtn"),
-  scanStatus: document.getElementById("scanStatus"),
-  progressWrap: document.getElementById("progressWrap"),
-  progressText: document.getElementById("progressText"),
+  progressFill: document.getElementById("progressFill"),
+  jokeText: document.getElementById("jokeText"),
+  accountAvatar: document.getElementById("accountAvatar"),
+  accountName: document.getElementById("accountName"),
   statFollowing: document.getElementById("statFollowing"),
   statFollowers: document.getElementById("statFollowers"),
   statNonFollowers: document.getElementById("statNonFollowers"),
@@ -24,39 +25,102 @@ const els = {
 };
 
 let currentNonFollowers = [];
-let progressInterval = null;
+let jokeInterval = null;
 
-const FUN_MESSAGES = [
-  "Preparation du dossier d'instruction...",
-  "Interrogatoire des comptes suspects en cours...",
-  "Certains ne survivront pas a cette purge...",
-  "On croise vos abonnements avec des fichiers confidentiels...",
-  "Preparation des dossiers d'extradition numerique...",
-  "Vos anciens amis regrettent deja leurs choix...",
-  "Cette liste sera versee au dossier...",
-  "Aucun follower n'est en securite...",
-  "On negocie leur sortie un par un...",
-  "Patience, la sentence approche..."
+const JOKES = [
+  "Preparation du dossier d'instruction.",
+  "Interrogatoire des comptes suspects en cours.",
+  "Certains ne survivront pas a cette purge.",
+  "On croise vos abonnements avec des fichiers confidentiels.",
+  "Preparation des dossiers d'extradition numerique.",
+  "Vos anciens amis regrettent deja leurs choix.",
+  "Cette liste sera versee au dossier.",
+  "Aucun follower n'est en securite.",
+  "On negocie leur sortie un par un.",
+  "Patience, la sentence approche.",
+  "Le tribunal des abonnements siege actuellement.",
+  "Certains comptes plaident deja coupables.",
+  "La liste noire s'allonge silencieusement.",
+  "On enterre les indesirables numeriques.",
+  "Chaque profil est passe au detecteur de mensonges.",
+  "Les indecis seront juges en leur absence.",
+  "On collecte les aveux avant l'execution.",
+  "Personne n'echappe a l'audit.",
+  "Le bourreau charge ses munitions numeriques.",
+  "La liste de deportation se remplit.",
+  "On classe les traitres par ordre alphabetique.",
+  "Ce compte a signe son arret de mort social.",
+  "La guillotine numerique est en approche.",
+  "On brule les preuves compromettantes.",
+  "Chaque clic scelle un destin.",
+  "L'inquisition des abonnements bat son plein.",
+  "On dresse la liste des condamnes.",
+  "Preparez les mouchoirs, ca va saigner.",
+  "Le peloton d'execution charge les profils.",
+  "On epluche les alibis foireux.",
+  "Cette purge n'a pas de pitie.",
+  "On traque les fantomes de votre feed.",
+  "La sentence tombe compte par compte.",
+  "On prepare le bucher numerique.",
+  "Chaque profil suspect est fiche.",
+  "L'audience est ouverte, personne n'est epargne.",
+  "On classe les cadavres par date de suivi.",
+  "Le verdict est deja ecrit d'avance.",
+  "On enterre les liens qui ne servaient a rien.",
+  "La chasse aux fantomes commence.",
+  "Certains comptes sentent deja le roussi.",
+  "On dresse le bilan des dommages collateraux.",
+  "Preparez le corbillard numerique.",
+  "On negocie les dernieres volontes des indesirables.",
+  "La faucheuse passe en revue vos abonnements.",
+  "Chaque nom raye est un adieu silencieux.",
+  "On solde les comptes, au sens propre.",
+  "La sentence finale se prepare dans l'ombre.",
+  "On tranche dans le vif sans sourciller.",
+  "Le dossier s'epaissit de secondes en secondes.",
+  "On dit adieu aux fantomes qui ne repondaient jamais."
 ];
 
-function startProgress() {
-  els.progressWrap.classList.remove("hidden");
+function startJokes() {
   let i = 0;
-  els.progressText.textContent = FUN_MESSAGES[0];
-  progressInterval = setInterval(() => {
-    i = (i + 1) % FUN_MESSAGES.length;
-    els.progressText.textContent = FUN_MESSAGES[i];
-  }, 2200);
+  els.jokeText.textContent = JOKES[0];
+  jokeInterval = setInterval(() => {
+    i = (i + 1) % JOKES.length;
+    els.jokeText.textContent = JOKES[i];
+  }, 6000);
 }
 
-function stopProgress() {
-  clearInterval(progressInterval);
-  progressInterval = null;
-  els.progressWrap.classList.add("hidden");
+function stopJokes() {
+  clearInterval(jokeInterval);
+  jokeInterval = null;
+  els.jokeText.textContent = "";
+}
+
+function setProgress(pct) {
+  els.progressFill.style.width = Math.max(0, Math.min(100, pct)) + "%";
+}
+
+chrome.runtime.onMessage.addListener((msg) => {
+  if (msg.action === "SCAN_PROGRESS") {
+    const totalOverall = msg.total + msg.otherPhaseTotal;
+    const fetchedOverall =
+      msg.phase === "following" ? msg.fetched : msg.otherPhaseFetched + msg.fetched;
+    const pct = totalOverall > 0 ? (fetchedOverall / totalOverall) * 100 : 0;
+    setProgress(pct);
+  }
+});
+
+function setAccount(username) {
+  if (!username) return;
+  els.accountAvatar.textContent = username.charAt(0).toUpperCase();
+  els.accountName.textContent = "@" + username;
 }
 
 chrome.storage.local.get("lastUsername", (r) => {
-  if (r.lastUsername) els.username.value = r.lastUsername;
+  if (r.lastUsername) {
+    els.username.value = r.lastUsername;
+    setAccount(r.lastUsername);
+  }
 });
 
 async function refreshStats() {
@@ -64,7 +128,7 @@ async function refreshStats() {
   currentNonFollowers = nonFollowers;
   const count = await getUnfollowCountLastHour();
   els.statNonFollowers.textContent = nonFollowers.length;
-  els.statRateLimit.textContent = `${count}/${MAX_PER_HOUR}`;
+  els.statRateLimit.textContent = `${count} / ${MAX_PER_HOUR}`;
 
   const history = await getScanHistory();
   if (history.length) {
@@ -99,10 +163,8 @@ function loadAvatar(imgEl, url, initial) {
     replaceWithFallback(imgEl, initial);
     return;
   }
-  imgEl.classList.add("avatar-loading");
   chrome.runtime.sendMessage({ action: "FETCH_IMAGE_REQUEST", url }, (res) => {
     if (!imgEl.isConnected) return;
-    imgEl.classList.remove("avatar-loading");
     if (res && res.success && res.dataUrl) {
       imgEl.src = res.dataUrl;
     } else {
@@ -131,7 +193,7 @@ function renderList() {
 
   list = sortProfiles(list, sortBy);
 
-  els.listCount.textContent = `${list.length} profil(s)`;
+  els.listCount.textContent = `${list.length} profil(s) selectionne(s)`;
   els.profileList.innerHTML = "";
 
   list.forEach((profile) => {
@@ -196,17 +258,18 @@ els.scanBtn.addEventListener("click", () => {
   if (!username) return alert("Entrez votre nom d'utilisateur Instagram (sans le @).");
 
   els.scanBtn.disabled = true;
-  els.scanStatus.textContent = "";
-  startProgress();
+  setProgress(0);
+  startJokes();
 
   chrome.runtime.sendMessage({ action: "SCAN_REQUEST", username }, async (response) => {
     els.scanBtn.disabled = false;
-    stopProgress();
+    stopJokes();
+    setProgress(0);
     if (!response || !response.success) {
-      els.scanStatus.textContent = "Erreur : " + (response?.error || "inconnue");
+      alert("Erreur : " + (response?.error || "inconnue"));
       return;
     }
-    els.scanStatus.textContent = `Scan termine : ${response.nonFollowersCount} non-followers.`;
+    setAccount(username);
     await refreshStats();
   });
 });
@@ -268,6 +331,18 @@ function refreshAutopilotStatus() {
       : `Inactif - ${status.count}/${status.max} cette heure`;
   });
 }
+
+document.querySelectorAll(".nav-item").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".nav-item").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    const targets = {
+      home: ".scan-card", list: ".list-card", stats: ".stats-grid", settings: ".autopilot-card"
+    };
+    const sel = targets[btn.dataset.tab];
+    if (sel) document.querySelector(sel)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+});
 
 setInterval(refreshAutopilotStatus, 15000);
 refreshStats();
