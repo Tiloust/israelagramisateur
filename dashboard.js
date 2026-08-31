@@ -28,13 +28,16 @@ let currentNonFollowers = [];
 let progressInterval = null;
 
 const FUN_MESSAGES = [
-  "🔍 Preparation du scan...",
-  "🕵️ Infiltration de vos abonnements...",
-  "📸 Chargement des avatars...",
-  "🤖 Comparaison des listes en cours...",
-  "☕ Encore un peu de patience...",
-  "🥵️ Traque des indecis en cours...",
-  "✨ Presque termine..."
+  "Preparation du dossier d'instruction...",
+  "Interrogatoire des comptes suspects en cours...",
+  "Certains ne survivront pas a cette purge...",
+  "On croise vos abonnements avec des fichiers confidentiels...",
+  "Preparation des dossiers d'extradition numerique...",
+  "Vos anciens amis regrettent deja leurs choix...",
+  "Cette liste sera versee au dossier...",
+  "Aucun follower n'est en securite...",
+  "On negocie leur sortie un par un...",
+  "Patience, la sentence approche..."
 ];
 
 function startProgress() {
@@ -103,13 +106,13 @@ function drawChart(history) {
     ctx.stroke();
   }
 
-  plot("total_following", "#a855f7");
+  plot("total_following", "#6366f1");
   plot("total_followers", "#38bdf8");
-  plot("non_followers_count", "#f43f5e");
+  plot("non_followers_count", "#ef4444");
 
-  ctx.fillStyle = "#a855f7"; ctx.fillText("Abonnements", w - 220, 16);
+  ctx.fillStyle = "#6366f1"; ctx.fillText("Abonnements", w - 220, 16);
   ctx.fillStyle = "#38bdf8"; ctx.fillText("Abonnes", w - 220, 32);
-  ctx.fillStyle = "#f43f5e"; ctx.fillText("Non-followers", w - 220, 48);
+  ctx.fillStyle = "#ef4444"; ctx.fillText("Non-followers", w - 220, 48);
 }
 
 function sortProfiles(list, sortBy) {
@@ -189,10 +192,10 @@ async function handleUnfollow(btn) {
     { action: "UNFOLLOW_REQUEST", userId: btn.dataset.id, username: btn.dataset.username },
     async (response) => {
       if (response && response.success) {
-        btn.textContent = "✅";
+        btn.textContent = "Fait";
         await refreshStats();
       } else {
-        btn.textContent = "❌ Reessayer";
+        btn.textContent = "Reessayer";
         btn.disabled = false;
         if (response && response.error) alert(response.error);
       }
@@ -273,8 +276,8 @@ function refreshAutopilotStatus() {
   chrome.runtime.sendMessage({ action: "AUTOPILOT_STATUS" }, (status) => {
     if (!status) return;
     els.autopilotStatus.textContent = status.active
-      ? `Actif · file: ${status.queueLength} restants · ${status.count}/${status.max} cette heure`
-      : `Inactif · ${status.count}/${status.max} cette heure`;
+      ? `Actif - file: ${status.queueLength} restants - ${status.count}/${status.max} cette heure`
+      : `Inactif - ${status.count}/${status.max} cette heure`;
   });
 }
 
