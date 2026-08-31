@@ -5,6 +5,7 @@ const els = {
   scanBtn: document.getElementById("scanBtn"),
   progressFill: document.getElementById("progressFill"),
   jokeText: document.getElementById("jokeText"),
+  accountChip: document.getElementById("accountChip"),
   accountAvatar: document.getElementById("accountAvatar"),
   accountName: document.getElementById("accountName"),
   statFollowing: document.getElementById("statFollowing"),
@@ -112,18 +113,12 @@ chrome.runtime.onMessage.addListener((msg) => {
   }
 });
 
-function setAccount(username) {
+function revealAccount(username) {
   if (!username) return;
   els.accountAvatar.textContent = username.charAt(0).toUpperCase();
   els.accountName.textContent = username;
+  els.accountChip.classList.remove("hidden");
 }
-
-chrome.storage.local.get("lastUsername", (r) => {
-  if (r.lastUsername) {
-    els.username.value = r.lastUsername;
-    setAccount(r.lastUsername);
-  }
-});
 
 async function refreshStats() {
   const nonFollowers = await getNonFollowers();
@@ -263,7 +258,7 @@ async function handleUnfollow(btn) {
 
 els.scanBtn.addEventListener("click", () => {
   const username = els.username.value.trim().replace(/^@/, "");
-  if (!username) return alert("Entrez votre nom d'utilisateur Instagram (sans le @).");
+  if (!username) return alert("Entrez votre nom d'utilisateur Instagram.");
 
   els.scanBtn.disabled = true;
   setProgress(0);
@@ -277,7 +272,7 @@ els.scanBtn.addEventListener("click", () => {
       alert("Erreur : " + (response?.error || "inconnue"));
       return;
     }
-    setAccount(username);
+    revealAccount(username);
     await refreshStats();
   });
 });
