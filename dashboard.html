@@ -20,7 +20,7 @@
       </div>
       <div id="progressWrap" class="progress-wrap hidden">
         <div class="progress-track"><div class="progress-fill"></div></div>
-        <span id="progressText" class="progress-text">🔍 Preparation du scan...</span>
+        <span id="progressText" class="progress-text">Preparation du scan...</span>
       </div>
       <span id="scanStatus" class="scan-status-msg"></span>
     </div>
@@ -28,15 +28,10 @@
 
   <main class="container">
     <section class="stats-grid">
-      <div class="stat-card"><div class="stat-icon icon-green">🤝</div><div><span class="stat-value" id="statFollowing">–</span><span class="stat-label">Abonnements</span></div></div>
-      <div class="stat-card"><div class="stat-icon icon-blue">👥</div><div><span class="stat-value" id="statFollowers">–</span><span class="stat-label">Abonnes</span></div></div>
-      <div class="stat-card"><div class="stat-icon icon-red">✖️</div><div><span class="stat-value" id="statNonFollowers">–</span><span class="stat-label">Non-followers</span></div></div>
-      <div class="stat-card"><div class="stat-icon icon-cyan">⏱️</div><div><span class="stat-value" id="statRateLimit">–</span><span class="stat-label">Desabonnements/h</span></div></div>
-    </section>
-
-    <section class="panel chart-section">
-      <h2>Evolution des scans</h2>
-      <div class="chart-wrap"><canvas id="historyChart" width="900" height="220"></canvas></div>
+      <div class="stat-card"><div class="stat-icon icon-green">S</div><div><span class="stat-value" id="statFollowing">–</span><span class="stat-label">Abonnements</span></div></div>
+      <div class="stat-card"><div class="stat-icon icon-blue">F</div><div><span class="stat-value" id="statFollowers">–</span><span class="stat-label">Abonnes</span></div></div>
+      <div class="stat-card"><div class="stat-icon icon-red">N</div><div><span class="stat-value" id="statNonFollowers">–</span><span class="stat-label">Non-followers</span></div></div>
+      <div class="stat-card"><div class="stat-icon icon-cyan">R</div><div><span class="stat-value" id="statRateLimit">–</span><span class="stat-label">Desabonnements/h</span></div></div>
     </section>
 
     <section class="panel controls">
@@ -53,7 +48,7 @@
     </section>
 
     <section class="panel autopilot">
-      <h2>🚀 Auto-pilot securise</h2>
+      <h2>Auto-pilot securise</h2>
       <p class="hint">Desabonne automatiquement en tache de fond (necessite un onglet instagram.com ouvert), avec notifications a chaque action.</p>
       <div class="autopilot-controls">
         <button id="startAutopilot" class="btn-primary">Demarrer sur la selection</button>

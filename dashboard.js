@@ -20,8 +20,7 @@ const els = {
   autopilotStatus: document.getElementById("autopilotStatus"),
   selectAll: document.getElementById("selectAll"),
   listCount: document.getElementById("listCount"),
-  profileList: document.getElementById("profileList"),
-  historyChart: document.getElementById("historyChart")
+  profileList: document.getElementById("profileList")
 };
 
 let currentNonFollowers = [];
@@ -73,46 +72,8 @@ async function refreshStats() {
     els.statFollowing.textContent = last.total_following;
     els.statFollowers.textContent = last.total_followers;
   }
-  drawChart(history);
   renderList();
   refreshAutopilotStatus();
-}
-
-function drawChart(history) {
-  const ctx = els.historyChart.getContext("2d");
-  const w = els.historyChart.width;
-  const h = els.historyChart.height;
-  ctx.clearRect(0, 0, w, h);
-  if (history.length < 2) {
-    ctx.fillStyle = "#8b93a5";
-    ctx.font = "13px Sora, sans-serif";
-    ctx.fillText("Scannez au moins deux fois pour voir l'evolution.", 16, h / 2);
-    return;
-  }
-
-  const maxVal = Math.max(...history.map((s) => s.total_following), 1);
-  const padding = 30;
-  const stepX = (w - padding * 2) / (history.length - 1);
-
-  function plot(key, color) {
-    ctx.beginPath();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2.5;
-    history.forEach((s, i) => {
-      const x = padding + i * stepX;
-      const y = h - padding - (s[key] / maxVal) * (h - padding * 2);
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-    });
-    ctx.stroke();
-  }
-
-  plot("total_following", "#6366f1");
-  plot("total_followers", "#38bdf8");
-  plot("non_followers_count", "#ef4444");
-
-  ctx.fillStyle = "#6366f1"; ctx.fillText("Abonnements", w - 220, 16);
-  ctx.fillStyle = "#38bdf8"; ctx.fillText("Abonnes", w - 220, 32);
-  ctx.fillStyle = "#ef4444"; ctx.fillText("Non-followers", w - 220, 48);
 }
 
 function sortProfiles(list, sortBy) {
@@ -131,6 +92,30 @@ function sortProfiles(list, sortBy) {
       sorted.sort((a, b) => a.username.localeCompare(b.username));
   }
   return sorted;
+}
+
+function loadAvatar(imgEl, url, initial) {
+  if (!url) {
+    replaceWithFallback(imgEl, initial);
+    return;
+  }
+  imgEl.classList.add("avatar-loading");
+  chrome.runtime.sendMessage({ action: "FETCH_IMAGE_REQUEST", url }, (res) => {
+    if (!imgEl.isConnected) return;
+    imgEl.classList.remove("avatar-loading");
+    if (res && res.success && res.dataUrl) {
+      imgEl.src = res.dataUrl;
+    } else {
+      replaceWithFallback(imgEl, initial);
+    }
+  });
+}
+
+function replaceWithFallback(imgEl, initial) {
+  const fallback = document.createElement("div");
+  fallback.className = "avatar-fallback";
+  fallback.textContent = initial;
+  if (imgEl.isConnected) imgEl.replaceWith(fallback);
 }
 
 function renderList() {
@@ -154,7 +139,7 @@ function renderList() {
     card.className = "profile-card";
     card.innerHTML = `
       <input type="checkbox" class="select-item" data-username="${profile.username}" />
-      <img src="${profile.profile_pic_url}" referrerpolicy="no-referrer" />
+      <img class="avatar-img" referrerpolicy="no-referrer" />
       <div class="profile-info">
         <a href="https://instagram.com/${profile.username}" target="_blank">@${profile.username}</a>
         <span class="full-name">${profile.full_name || ""}</span>
@@ -167,6 +152,9 @@ function renderList() {
       </div>
     `;
     els.profileList.appendChild(card);
+
+    const img = card.querySelector(".avatar-img");
+    loadAvatar(img, profile.profile_pic_url, profile.username.charAt(0).toUpperCase());
   });
 
   document.querySelectorAll(".unfollow-btn").forEach((btn) => {

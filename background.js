@@ -70,6 +70,15 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       }
     }
 
+    if (msg.action === "FETCH_IMAGE_REQUEST") {
+      try {
+        const result = await relayToContentScript({ action: "CS_FETCH_IMAGE", url: msg.url });
+        sendResponse(result);
+      } catch (e) {
+        sendResponse({ success: false, error: e.message });
+      }
+    }
+
     if (msg.action === "START_AUTOPILOT") {
       await setQueue(msg.usernames);
       await chrome.storage.local.set({ autoPilotActive: true });
