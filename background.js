@@ -48,7 +48,14 @@ async function scanAndSave(username) {
   return { nonFollowersCount, lostFollowers };
 }
 
+const HANDLED_ACTIONS = new Set([
+  "SCAN_REQUEST", "UNFOLLOW_REQUEST", "FETCH_IMAGE_REQUEST",
+  "START_AUTOPILOT", "STOP_AUTOPILOT", "AUTOPILOT_STATUS"
+]);
+
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (!HANDLED_ACTIONS.has(msg.action)) return false;
+
   (async () => {
     if (msg.action === "SCAN_REQUEST") {
       try {
