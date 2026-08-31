@@ -4,6 +4,8 @@ const els = {
   username: document.getElementById("username"),
   scanBtn: document.getElementById("scanBtn"),
   scanStatus: document.getElementById("scanStatus"),
+  progressWrap: document.getElementById("progressWrap"),
+  progressText: document.getElementById("progressText"),
   statFollowing: document.getElementById("statFollowing"),
   statFollowers: document.getElementById("statFollowers"),
   statNonFollowers: document.getElementById("statNonFollowers"),
@@ -23,6 +25,33 @@ const els = {
 };
 
 let currentNonFollowers = [];
+let progressInterval = null;
+
+const FUN_MESSAGES = [
+  "🔍 Preparation du scan...",
+  "🕵️ Infiltration de vos abonnements...",
+  "📸 Chargement des avatars...",
+  "🤖 Comparaison des listes en cours...",
+  "☕ Encore un peu de patience...",
+  "🥵️ Traque des indecis en cours...",
+  "✨ Presque termine..."
+];
+
+function startProgress() {
+  els.progressWrap.classList.remove("hidden");
+  let i = 0;
+  els.progressText.textContent = FUN_MESSAGES[0];
+  progressInterval = setInterval(() => {
+    i = (i + 1) % FUN_MESSAGES.length;
+    els.progressText.textContent = FUN_MESSAGES[i];
+  }, 2200);
+}
+
+function stopProgress() {
+  clearInterval(progressInterval);
+  progressInterval = null;
+  els.progressWrap.classList.add("hidden");
+}
 
 chrome.storage.local.get("lastUsername", (r) => {
   if (r.lastUsername) els.username.value = r.lastUsername;
@@ -52,8 +81,8 @@ function drawChart(history) {
   const h = els.historyChart.height;
   ctx.clearRect(0, 0, w, h);
   if (history.length < 2) {
-    ctx.fillStyle = "#999";
-    ctx.font = "13px sans-serif";
+    ctx.fillStyle = "#8b93a5";
+    ctx.font = "13px Sora, sans-serif";
     ctx.fillText("Scannez au moins deux fois pour voir l'evolution.", 16, h / 2);
     return;
   }
@@ -65,7 +94,7 @@ function drawChart(history) {
   function plot(key, color) {
     ctx.beginPath();
     ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5;
     history.forEach((s, i) => {
       const x = padding + i * stepX;
       const y = h - padding - (s[key] / maxVal) * (h - padding * 2);
@@ -74,13 +103,31 @@ function drawChart(history) {
     ctx.stroke();
   }
 
-  plot("total_following", "#833ab4");
-  plot("total_followers", "#0095f6");
-  plot("non_followers_count", "#ed4956");
+  plot("total_following", "#a855f7");
+  plot("total_followers", "#38bdf8");
+  plot("non_followers_count", "#f43f5e");
 
-  ctx.fillStyle = "#833ab4"; ctx.fillText("Abonnements", w - 220, 16);
-  ctx.fillStyle = "#0095f6"; ctx.fillText("Abonnes", w - 220, 32);
-  ctx.fillStyle = "#ed4956"; ctx.fillText("Non-followers", w - 220, 48);
+  ctx.fillStyle = "#a855f7"; ctx.fillText("Abonnements", w - 220, 16);
+  ctx.fillStyle = "#38bdf8"; ctx.fillText("Abonnes", w - 220, 32);
+  ctx.fillStyle = "#f43f5e"; ctx.fillText("Non-followers", w - 220, 48);
+}
+
+function sortProfiles(list, sortBy) {
+  const sorted = [...list];
+  switch (sortBy) {
+    case "username_desc":
+      sorted.sort((a, b) => b.username.localeCompare(a.username));
+      break;
+    case "first_seen_asc":
+      sorted.sort((a, b) => a.first_seen - b.first_seen);
+      break;
+    case "first_seen_desc":
+      sorted.sort((a, b) => b.first_seen - a.first_seen);
+      break;
+    default:
+      sorted.sort((a, b) => a.username.localeCompare(b.username));
+  }
+  return sorted;
 }
 
 function renderList() {
@@ -94,10 +141,7 @@ function renderList() {
     return true;
   });
 
-  list.sort((a, b) => {
-    if (sortBy === "first_seen") return a.first_seen - b.first_seen;
-    return a.username.localeCompare(b.username);
-  });
+  list = sortProfiles(list, sortBy);
 
   els.listCount.textContent = `${list.length} profil(s)`;
   els.profileList.innerHTML = "";
@@ -161,10 +205,12 @@ els.scanBtn.addEventListener("click", () => {
   if (!username) return alert("Entrez votre nom d'utilisateur Instagram (sans le @).");
 
   els.scanBtn.disabled = true;
-  els.scanStatus.textContent = "Scan en cours (peut prendre 1 a 2 minutes)...";
+  els.scanStatus.textContent = "";
+  startProgress();
 
   chrome.runtime.sendMessage({ action: "SCAN_REQUEST", username }, async (response) => {
     els.scanBtn.disabled = false;
+    stopProgress();
     if (!response || !response.success) {
       els.scanStatus.textContent = "Erreur : " + (response?.error || "inconnue");
       return;

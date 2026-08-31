@@ -3,38 +3,49 @@
 <head>
 <meta charset="UTF-8" />
 <title>Instagram Unfollow Tracker Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="dashboard.css" />
 </head>
 <body>
+  <div class="bg-aurora"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+
   <header>
     <div class="header-inner">
-      <h1>🔍 Instagram Unfollow Tracker <span class="pro">PRO</span></h1>
+      <h1><span class="logo-dot"></span>Instagram Unfollow Tracker <span class="pro">PRO</span></h1>
       <div class="scan-bar">
         <input type="text" id="username" placeholder="Votre username Instagram (sans @)" />
         <button id="scanBtn">Scanner</button>
-        <span id="scanStatus"></span>
       </div>
+      <div id="progressWrap" class="progress-wrap hidden">
+        <div class="progress-track"><div class="progress-fill"></div></div>
+        <span id="progressText" class="progress-text">🔍 Preparation du scan...</span>
+      </div>
+      <span id="scanStatus" class="scan-status-msg"></span>
     </div>
   </header>
 
   <main class="container">
     <section class="stats-grid">
-      <div class="stat-card"><span class="stat-value" id="statFollowing">–</span><span class="stat-label">Abonnements</span></div>
-      <div class="stat-card"><span class="stat-value" id="statFollowers">–</span><span class="stat-label">Abonnes</span></div>
-      <div class="stat-card"><span class="stat-value" id="statNonFollowers">–</span><span class="stat-label">Non-followers</span></div>
-      <div class="stat-card"><span class="stat-value" id="statRateLimit">–</span><span class="stat-label">Desabonnements/h</span></div>
+      <div class="stat-card"><div class="stat-icon icon-green">🤝</div><div><span class="stat-value" id="statFollowing">–</span><span class="stat-label">Abonnements</span></div></div>
+      <div class="stat-card"><div class="stat-icon icon-blue">👥</div><div><span class="stat-value" id="statFollowers">–</span><span class="stat-label">Abonnes</span></div></div>
+      <div class="stat-card"><div class="stat-icon icon-red">✖️</div><div><span class="stat-value" id="statNonFollowers">–</span><span class="stat-label">Non-followers</span></div></div>
+      <div class="stat-card"><div class="stat-icon icon-cyan">⏱️</div><div><span class="stat-value" id="statRateLimit">–</span><span class="stat-label">Desabonnements/h</span></div></div>
     </section>
 
     <section class="panel chart-section">
       <h2>Evolution des scans</h2>
-      <canvas id="historyChart" width="900" height="220"></canvas>
+      <div class="chart-wrap"><canvas id="historyChart" width="900" height="220"></canvas></div>
     </section>
 
     <section class="panel controls">
       <input type="text" id="searchInput" placeholder="Rechercher un @username..." />
       <select id="sortSelect">
-        <option value="username">Trier par nom</option>
-        <option value="first_seen">Trier par anciennete</option>
+        <option value="username_asc">Nom (A -> Z)</option>
+        <option value="username_desc">Nom (Z -> A)</option>
+        <option value="first_seen_asc">Suivi depuis le plus longtemps</option>
+        <option value="first_seen_desc">Suivi le plus recemment</option>
       </select>
       <label class="check-label"><input type="checkbox" id="hideWhitelisted" /> Masquer la whitelist</label>
       <button id="exportCSV" class="btn-secondary">Export CSV</button>
