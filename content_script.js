@@ -67,6 +67,22 @@ async function unfollow(targetUserId) {
   return res.ok;
 }
 
+async function fetchImageAsDataUrl(url) {
+  try {
+    const res = await fetch(url, { credentials: "omit" });
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    return await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch (e) {
+    return null;
+  }
+}
+
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.action === "CS_SCAN") {
     (async () => {
@@ -91,6 +107,14 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       } catch (e) {
         sendResponse({ success: false, error: e.message });
       }
+    })();
+    return true;
+  }
+
+  if (msg.action === "CS_FETCH_IMAGE") {
+    (async () => {
+      const dataUrl = await fetchImageAsDataUrl(msg.url);
+      sendResponse({ success: !!dataUrl, dataUrl });
     })();
     return true;
   }
