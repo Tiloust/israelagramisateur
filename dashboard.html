@@ -9,62 +9,107 @@
 <link rel="stylesheet" href="dashboard.css" />
 </head>
 <body>
-  <div class="bg-aurora"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><span class="logo-serif">IU</span><span class="logo-sub">PRO</span></div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="home" title="Accueil">
+          <svg viewBox="0 0 24 24"><path d="M4 11.5L12 4l8 7.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" fill="currentColor"/></svg>
+        </button>
+        <button class="nav-item" data-tab="list" title="Profils">
+          <svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3" fill="currentColor"/><circle cx="16" cy="8" r="3" fill="currentColor"/><path d="M2 20c0-3 3-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="2" fill="none"/><path d="M10 20c0-3 3-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        </button>
+        <button class="nav-item" data-tab="stats" title="Statistiques">
+          <svg viewBox="0 0 24 24"><rect x="4" y="12" width="4" height="8" fill="currentColor"/><rect x="10" y="7" width="4" height="13" fill="currentColor"/><rect x="16" y="3" width="4" height="17" fill="currentColor"/></svg>
+        </button>
+        <button class="nav-item" data-tab="settings" title="Parametres">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
+        </button>
+      </nav>
+    </aside>
 
-  <header>
-    <div class="header-inner">
-      <h1><span class="logo-dot"></span>Instagram Unfollow Tracker <span class="pro">PRO</span></h1>
-      <div class="scan-bar">
-        <input type="text" id="username" placeholder="Votre username Instagram (sans @)" />
-        <button id="scanBtn">Scanner</button>
-      </div>
-      <div id="progressWrap" class="progress-wrap hidden">
-        <div class="progress-track"><div class="progress-fill"></div></div>
-        <span id="progressText" class="progress-text">Preparation du scan...</span>
-      </div>
-      <span id="scanStatus" class="scan-status-msg"></span>
-    </div>
-  </header>
+    <main class="main">
+      <header class="topbar">
+        <h1><span class="serif">Instagram Unfollow Tracker</span> <span class="pro-badge">PRO</span></h1>
+        <div class="account-chip">
+          <div class="account-avatar" id="accountAvatar">?</div>
+          <div class="account-text">
+            <span class="account-name" id="accountName">Aucun compte</span>
+            <span class="account-sub">Compte PRO</span>
+          </div>
+          <span class="chip-caret">v</span>
+        </div>
+      </header>
 
-  <main class="container">
-    <section class="stats-grid">
-      <div class="stat-card"><div class="stat-icon icon-green">S</div><div><span class="stat-value" id="statFollowing">–</span><span class="stat-label">Abonnements</span></div></div>
-      <div class="stat-card"><div class="stat-icon icon-blue">F</div><div><span class="stat-value" id="statFollowers">–</span><span class="stat-label">Abonnes</span></div></div>
-      <div class="stat-card"><div class="stat-icon icon-red">N</div><div><span class="stat-value" id="statNonFollowers">–</span><span class="stat-label">Non-followers</span></div></div>
-      <div class="stat-card"><div class="stat-icon icon-cyan">R</div><div><span class="stat-value" id="statRateLimit">–</span><span class="stat-label">Desabonnements/h</span></div></div>
-    </section>
+      <section class="scan-card">
+        <label class="field-label">Nom d'utilisateur Instagram</label>
+        <div class="scan-row">
+          <input type="text" id="username" placeholder="tiloust__" />
+          <button id="scanBtn">Lancer le scan <span class="btn-arrow">-&gt;</span></button>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <p class="joke-text" id="jokeText"></p>
+      </section>
 
-    <section class="panel controls">
-      <input type="text" id="searchInput" placeholder="Rechercher un @username..." />
-      <select id="sortSelect">
-        <option value="username_asc">Nom (A -> Z)</option>
-        <option value="username_desc">Nom (Z -> A)</option>
-        <option value="first_seen_asc">Suivi depuis le plus longtemps</option>
-        <option value="first_seen_desc">Suivi le plus recemment</option>
-      </select>
-      <label class="check-label"><input type="checkbox" id="hideWhitelisted" /> Masquer la whitelist</label>
-      <button id="exportCSV" class="btn-secondary">Export CSV</button>
-      <button id="exportJSON" class="btn-secondary">Export JSON</button>
-    </section>
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="currentColor"/></svg></div>
+          <div class="stat-text"><span class="stat-label">Abonnements</span><span class="stat-value" id="statFollowing">-</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="currentColor"/></svg></div>
+          <div class="stat-text"><span class="stat-label">Abonnes</span><span class="stat-value" id="statFollowers">-</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="8" cy="9" r="3" fill="currentColor"/><circle cx="16" cy="9" r="3" fill="currentColor"/><path d="M2 20c0-3.5 3-5.5 6-5.5s6 2 6 5.5" fill="currentColor"/><path d="M10 20c0-3.5 3-5.5 6-5.5s6 2 6 5.5" fill="currentColor"/></svg></div>
+          <div class="stat-text"><span class="stat-label">Non-followers</span><span class="stat-value" id="statNonFollowers">0</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 7v5l3 3" stroke="currentColor" stroke-width="2" fill="none"/></svg></div>
+          <div class="stat-text"><span class="stat-label">Desabonnements / h</span><span class="stat-value" id="statRateLimit">0 / 15</span></div>
+        </div>
+      </section>
 
-    <section class="panel autopilot">
-      <h2>Auto-pilot securise</h2>
-      <p class="hint">Desabonne automatiquement en tache de fond (necessite un onglet instagram.com ouvert), avec notifications a chaque action.</p>
-      <div class="autopilot-controls">
-        <button id="startAutopilot" class="btn-primary">Demarrer sur la selection</button>
-        <button id="stopAutopilot" class="btn-danger">Arreter</button>
-        <span id="autopilotStatus">Inactif</span>
-      </div>
-    </section>
+      <section class="controls-card">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2"/></svg>
+          <input type="text" id="searchInput" placeholder="Rechercher un @username" />
+        </div>
+        <select id="sortSelect">
+          <option value="username_asc">Nom (A -&gt; Z)</option>
+          <option value="username_desc">Nom (Z -&gt; A)</option>
+          <option value="first_seen_asc">Suivi depuis le plus longtemps</option>
+          <option value="first_seen_desc">Suivi le plus recemment</option>
+        </select>
+        <label class="check-label"><input type="checkbox" id="hideWhitelisted" /> Masquer la whitelist</label>
+        <button id="exportCSV" class="btn-outline">Export CSV</button>
+        <button id="exportJSON" class="btn-dark">Export JSON</button>
+      </section>
 
-    <section class="panel list-section">
-      <div class="list-header">
-        <label class="check-label"><input type="checkbox" id="selectAll" /> Tout selectionner</label>
-        <span id="listCount"></span>
-      </div>
-      <div id="profileList" class="profile-grid"></div>
-    </section>
-  </main>
+      <section class="autopilot-card">
+        <div class="autopilot-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
+        </div>
+        <div class="autopilot-text">
+          <span class="autopilot-title">Auto-pilot securise</span>
+          <span class="autopilot-hint">Desabonne automatiquement en tache de fond (necessite un onglet instagram.com ouvert), avec notifications a chaque action.</span>
+        </div>
+        <div class="autopilot-actions">
+          <button id="startAutopilot" class="btn-dark">Demarrer sur la selection</button>
+          <button id="stopAutopilot" class="btn-outline">Arreter</button>
+          <span id="autopilotStatus" class="autopilot-status">Inactif - 0/15 cette heure</span>
+        </div>
+      </section>
+
+      <section class="list-card">
+        <div class="list-header">
+          <label class="check-label"><input type="checkbox" id="selectAll" /> Tout selectionner</label>
+          <span id="listCount">0 profil(s) selectionne(s)</span>
+        </div>
+        <div id="profileList" class="profile-grid"></div>
+      </section>
+    </main>
+  </div>
 
   <script src="db.js"></script>
   <script src="dashboard.js"></script>
