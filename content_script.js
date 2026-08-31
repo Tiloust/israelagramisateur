@@ -22,16 +22,21 @@ async function igFetch(url, options = {}) {
   return fetch(url, { ...options, headers, credentials: "include" });
 }
 
-async function getUserId(username) {
+async function getProfileInfo(username) {
   const res = await igFetch(
     `https://www.instagram.com/api/v1/users/web_profile_info/?username=${encodeURIComponent(username)}`
   );
   if (!res.ok) throw new Error(`Profil introuvable (${res.status}).`);
   const data = await res.json();
-  return data.data.user.id;
+  const u = data.data.user;
+  return {
+    id: u.id,
+    followingCount: u.edge_follow ? u.edge_follow.count : 0,
+    followersCount: u.edge_followed_by ? u.edge_followed_by.count : 0
+  };
 }
 
-async function fetchList(userId, type) {
+async function fetchList(userId, type, total, phase, otherPhaseTotal, otherPhaseFetched) {
   let items = [];
   let maxId = "";
   let hasNext = true;
@@ -48,6 +53,16 @@ async function fetchList(userId, type) {
         user_id: u.pk
       }))
     );
+
+    chrome.runtime.sendMessage({
+      action: "SCAN_PROGRESS",
+      phase,
+      fetched: items.length,
+      total,
+      otherPhaseTotal,
+      otherPhaseFetched
+    });
+
     hasNext = !!data.next_max_id;
     maxId = data.next_max_id || "";
     if (hasNext) await humanDelay(2, 5);
@@ -87,10 +102,14 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.action === "CS_SCAN") {
     (async () => {
       try {
-        const userId = await getUserId(msg.username);
-        const following = await fetchList(userId, "following");
+        const info = await getProfileInfo(msg.username);
+        const following = await fetchList(
+          info.id, "following", info.followingCount, "following", info.followersCount, 0
+        );
         await humanDelay(2, 4);
-        const followers = await fetchList(userId, "followers");
+        const followers = await fetchList(
+          info.id, "followers", info.followersCount, "followers", info.followingCount, following.length
+        );
         sendResponse({ success: true, following, followers });
       } catch (e) {
         sendResponse({ success: false, error: e.message });
