@@ -19,9 +19,11 @@ const els = {
   startAutopilot: document.getElementById("startAutopilot"),
   stopAutopilot: document.getElementById("stopAutopilot"),
   autopilotStatus: document.getElementById("autopilotStatus"),
+  autopilotToggle: document.getElementById("autopilotToggle"),
   selectAll: document.getElementById("selectAll"),
   listCount: document.getElementById("listCount"),
-  profileList: document.getElementById("profileList")
+  profileList: document.getElementById("profileList"),
+  emptyState: document.getElementById("emptyState")
 };
 
 let currentNonFollowers = [];
@@ -113,7 +115,7 @@ chrome.runtime.onMessage.addListener((msg) => {
 function setAccount(username) {
   if (!username) return;
   els.accountAvatar.textContent = username.charAt(0).toUpperCase();
-  els.accountName.textContent = "@" + username;
+  els.accountName.textContent = username;
 }
 
 chrome.storage.local.get("lastUsername", (r) => {
@@ -193,13 +195,19 @@ function renderList() {
 
   list = sortProfiles(list, sortBy);
 
-  els.listCount.textContent = `${list.length} profil(s) selectionne(s)`;
+  els.listCount.textContent = `${list.length} profil(s)`;
   els.profileList.innerHTML = "";
 
+  if (list.length === 0) {
+    els.emptyState.classList.add("visible");
+  } else {
+    els.emptyState.classList.remove("visible");
+  }
+
   list.forEach((profile) => {
-    const card = document.createElement("div");
-    card.className = "profile-card";
-    card.innerHTML = `
+    const row = document.createElement("div");
+    row.className = "profile-row";
+    row.innerHTML = `
       <input type="checkbox" class="select-item" data-username="${profile.username}" />
       <img class="avatar-img" referrerpolicy="no-referrer" />
       <div class="profile-info">
@@ -207,15 +215,15 @@ function renderList() {
         <span class="full-name">${profile.full_name || ""}</span>
       </div>
       <div class="profile-actions">
-        <button class="unfollow-btn" data-username="${profile.username}" data-id="${profile.user_id}">Desabonner</button>
         <label class="whitelist-toggle">
-          <input type="checkbox" class="wl-toggle" data-username="${profile.username}" ${profile.whitelisted ? "checked" : ""} /> whitelist
+          <input type="checkbox" class="wl-toggle" data-username="${profile.username}" ${profile.whitelisted ? "checked" : ""} /> Whitelist
         </label>
+        <button class="unfollow-btn" data-username="${profile.username}" data-id="${profile.user_id}">Se d&eacute;sabonner</button>
       </div>
     `;
-    els.profileList.appendChild(card);
+    els.profileList.appendChild(row);
 
-    const img = card.querySelector(".avatar-img");
+    const img = row.querySelector(".avatar-img");
     loadAvatar(img, profile.profile_pic_url, profile.username.charAt(0).toUpperCase());
   });
 
@@ -233,7 +241,7 @@ function renderList() {
 async function handleUnfollow(btn) {
   const count = await getUnfollowCountLastHour();
   if (count >= MAX_PER_HOUR) {
-    alert(`Limite atteinte (${MAX_PER_HOUR}/h). Reessayez plus tard ou utilisez l'auto-pilot.`);
+    alert(`Limite atteinte (${MAX_PER_HOUR}/h). Reessayez plus tard ou utilisez l'automatisation.`);
     return;
   }
   btn.disabled = true;
@@ -310,7 +318,7 @@ els.startAutopilot.addEventListener("click", () => {
     : currentNonFollowers.filter((p) => !p.whitelisted).map((p) => p.username);
 
   if (!usernames.length) return alert("Aucun profil a desabonner.");
-  if (!confirm(`Demarrer l'auto-pilot sur ${usernames.length} profil(s) ? Rythme securise : max ${MAX_PER_HOUR}/h. Garde un onglet instagram.com ouvert.`)) return;
+  if (!confirm(`Demarrer l'automatisation sur ${usernames.length} profil(s) ? Rythme securise : max ${MAX_PER_HOUR}/h. Garde un onglet instagram.com ouvert.`)) return;
 
   chrome.runtime.sendMessage({ action: "START_AUTOPILOT", usernames }, () => {
     refreshAutopilotStatus();
@@ -326,9 +334,10 @@ els.stopAutopilot.addEventListener("click", () => {
 function refreshAutopilotStatus() {
   chrome.runtime.sendMessage({ action: "AUTOPILOT_STATUS" }, (status) => {
     if (!status) return;
+    els.autopilotToggle.checked = status.active;
     els.autopilotStatus.textContent = status.active
-      ? `Actif - file: ${status.queueLength} restants - ${status.count}/${status.max} cette heure`
-      : `Inactif - ${status.count}/${status.max} cette heure`;
+      ? `Actif — ${status.queueLength} restant(s) — ${status.count}/${status.max} cette heure`
+      : `${status.count} action(s) effectuée(s) cette heure`;
   });
 }
 
@@ -337,7 +346,7 @@ document.querySelectorAll(".nav-item").forEach((btn) => {
     document.querySelectorAll(".nav-item").forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
     const targets = {
-      home: ".scan-card", list: ".list-card", stats: ".stats-grid", settings: ".autopilot-card"
+      home: ".scan-section", list: ".list-section", settings: ".automation-section"
     };
     const sel = targets[btn.dataset.tab];
     if (sel) document.querySelector(sel)?.scrollIntoView({ behavior: "smooth", block: "start" });
